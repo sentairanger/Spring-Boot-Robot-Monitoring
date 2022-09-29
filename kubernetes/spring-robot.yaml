@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /actuator/prometheus
+    prometheus.io/port: springport
+  labels:
+    name: spring-robot
+    release: prometheus
+  name: spring-robot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-robot
+  template:
+    metadata:
+      labels:
+        app: spring-robot
+    spec:
+      containers:
+      - name: spring-robot
+        image: linuxrobotgeek/spring-robot:latest
+        imagePullPolicy: Always
+        ports:
+        - name: springport
+          containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-robot
+  labels:
+    app: spring-robot
+spec:
+  selector:
+    app: spring-robot
+  ports:
+    - name: spring-robot
+      protocol: TCP
+      port: 8080
+      targetPort: springport
+  type: LoadBalancer
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: spring-robot
+  namespace: monitoring
+  labels:
+    app: spring-robot
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: spring-robot
+  endpoints:
+  - port: spring-robot
+    path: /actuator/prometheus
+    interval: 15s
+  namespaceSelector:
+    matchNames:
+    - default

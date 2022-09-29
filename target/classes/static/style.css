@@ -1,0 +1,25 @@
+body {
+  background: aqua;
+}
+
+.btn-group button {
+        padding: 10px 24px;
+   		color: white;
+   		border-radius: 12px;
+   		font-size: 17px;
+        background: #ff33af;
+
+
+}
+
+.eye {
+padding: 10px 24px;
+   		color: white;
+   		border-radius: 12px;
+   		font-size: 17px;
+        background: #ff33af
+}
+
+
+
+
